@@ -151,12 +151,18 @@ export default function HomePage() {
         }
       }
     } catch (error) {
-      console.error('Error saving video:', error);
+      console.error('Error saving video with notes:', error)
     }
   };
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-8 relative">
+      {/* Background Blobs */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/20 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-pink-600/20 blur-[120px]" />
+      </div>
+
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-12">
