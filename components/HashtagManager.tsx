@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import type { TrackedTag } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
+import ScrapeNamingModal from '@/components/ScrapeNamingModal';
 
 interface HashtagManagerProps {
     tags: TrackedTag[];
     onAdd: (keyword: string, platform: 'tiktok' | 'instagram') => void;
     onDelete: (id: string) => void;
     onToggleStatus: (id: string, status: 'active' | 'paused') => void;
-    onScrape: () => void;
+    onScrape: (sessionName?: string, sessionDescription?: string) => void;
     isScraping: boolean;
 }
 
@@ -25,6 +26,7 @@ export default function HashtagManager({
     const [platform, setPlatform] = useState<'tiktok' | 'instagram'>('tiktok');
     const [isAdding, setIsAdding] = useState(false);
     const [isExpanded, setIsExpanded] = useState(true);
+    const [showNamingModal, setShowNamingModal] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -34,6 +36,14 @@ export default function HashtagManager({
         await onAdd(keyword.trim(), platform);
         setKeyword('');
         setIsAdding(false);
+    };
+
+    const handleScrapeClick = () => {
+        setShowNamingModal(true);
+    };
+
+    const handleConfirmScrape = (name: string, description?: string) => {
+        onScrape(name || undefined, description);
     };
 
     const activeTags = tags.filter(t => t.status === 'active');
@@ -74,7 +84,7 @@ export default function HashtagManager({
                     </button>
 
                     <button
-                        onClick={onScrape}
+                        onClick={handleScrapeClick}
                         disabled={isScraping || tags.length === 0}
                         className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         title={tags.length === 0 ? "Add hashtags first" : "Scrape all active hashtags"}
@@ -247,6 +257,14 @@ export default function HashtagManager({
                     )}
                 </div>
             )}
+
+            {/* Scrape Naming Modal */}
+            <ScrapeNamingModal
+                isOpen={showNamingModal}
+                onClose={() => setShowNamingModal(false)}
+                onConfirm={handleConfirmScrape}
+                isScraping={isScraping}
+            />
         </div>
     );
 }
