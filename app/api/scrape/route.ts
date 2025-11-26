@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getActiveTrackedTags, insertVideos, updateLastScraped, videoExists } from '@/lib/supabase';
 import { scrapeTikTokHashtag } from '@/lib/apify';
-import { filterVideos, DEFAULT_FILTERS } from '@/lib/viralScore';
+import { filterVideos } from '@/lib/viralScore';
 import type { Video } from '@/lib/types';
+import { DEFAULT_FILTERS } from '@/lib/types';
 
 export const maxDuration = 300; // 5 minutes max for scraping
 
