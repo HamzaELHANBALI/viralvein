@@ -7,14 +7,15 @@ import {
     updateVideoNotes,
 } from '@/lib/supabase';
 
-// GET - Fetch videos (all or saved only)
+// GET - Fetch videos (all or saved only, optionally filtered by session)
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const savedOnly = searchParams.get('saved') === 'true';
         const limit = parseInt(searchParams.get('limit') || '100');
+        const sessionId = searchParams.get('session_id') || undefined;
 
-        const videos = savedOnly ? await getSavedVideos() : await getVideos(limit);
+        const videos = savedOnly ? await getSavedVideos() : await getVideos(limit, sessionId);
 
         return NextResponse.json({ success: true, data: videos });
     } catch (error) {

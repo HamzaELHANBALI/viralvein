@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getActiveTrackedTags, insertVideos, updateLastScraped, videoExists } from '@/lib/supabase';
+import { getActiveTrackedTags, insertVideos, updateLastScraped, videoExists, createScrapeSession, updateSessionVideoCount } from '@/lib/supabase';
 import { scrapeTikTokHashtag } from '@/lib/apify';
 import { filterVideos } from '@/lib/viralScore';
 import type { Video } from '@/lib/types';
@@ -11,7 +11,7 @@ export const maxDuration = 300; // 5 minutes max for scraping
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { tagId, platform } = body;
+        const { tagId, platform, sessionName, sessionDescription } = body;
 
         // Get tags to scrape
         let tagsToScrape;
@@ -34,11 +34,31 @@ export async function POST(request: NextRequest) {
             });
         }
 
+        // Create a new scrape session
+        const now = new Date();
+        const defaultSessionName = sessionName || `Scrape ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+        const hashtagKeywords = tagsToScrape.map(tag => tag.keyword);
+
+        const session = await createScrapeSession(
+            defaultSessionName,
+            sessionDescription || `Scraped ${tagsToScrape.length} hashtags`,
+            hashtagKeywords
+        );
+
+        if (!session) {
+            return NextResponse.json(
+                { success: false, error: 'Failed to create scrape session' },
+                { status: 500 }
+            );
+        }
+
         const stats = {
             scraped: 0,
             filtered: 0,
             saved: 0,
             errors: [] as string[],
+            sessionId: session.id,
+            sessionName: session.name,
         };
 
         // Scrape each tag
@@ -68,10 +88,14 @@ export async function POST(request: NextRequest) {
                 const videosToInsert: Omit<Video, 'id' | 'created_at'>[] = [];
 
                 for (const video of filteredVideos) {
-                    // Check if video already exists
-                    const exists = await videoExists(video.platform_id!);
+                    // Check if video already exists in this session
+                    const exists = await videoExists(video.platform_id!, session.id);
                     if (!exists) {
-                        videosToInsert.push(video as Omit<Video, 'id' | 'created_at'>);
+                        // Add scrape_session_id to the video
+                        videosToInsert.push({
+                            ...video,
+                            scrape_session_id: session.id,
+                        } as Omit<Video, 'id' | 'created_at'>);
                     }
                 }
 
@@ -96,10 +120,14 @@ export async function POST(request: NextRequest) {
             }
         }
 
+        // Update the session's video count
+        await updateSessionVideoCount(session.id, stats.saved);
+
         return NextResponse.json({
             success: true,
             message: `Scraping completed for ${tagsToScrape.length} tags`,
             stats,
+            videosFound: stats.saved,
         });
     } catch (error) {
         return NextResponse.json(

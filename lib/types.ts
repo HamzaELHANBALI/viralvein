@@ -9,8 +9,18 @@ export interface TrackedTag {
   created_at?: string;
 }
 
+export interface ScrapeSession {
+  id: string;
+  name: string;
+  description?: string | null;
+  video_count: number;
+  hashtags_scraped: string[];
+  created_at: string;
+}
+
 export interface Video {
   id: string;
+  scrape_session_id: string;
   platform_id: string;
   url: string;
   thumbnail: string;
