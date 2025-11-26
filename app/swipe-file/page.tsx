@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import type { Video } from '@/lib/types';
 import VideoCard from '@/components/VideoCard';
 import VideoModal from '@/components/VideoModal';
+import { useToast } from '@/components/Toast';
 
 export default function SwipeFilePage() {
     const [savedVideos, setSavedVideos] = useState<Video[]>([]);
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const { showToast } = useToast();
 
     useEffect(() => {
         fetchSavedVideos();
@@ -21,9 +23,12 @@ export default function SwipeFilePage() {
             const data = await res.json();
             if (data.success) {
                 setSavedVideos(data.data);
+            } else {
+                showToast('Failed to fetch saved videos', 'error');
             }
         } catch (error) {
             console.error('Error fetching saved videos:', error);
+            showToast('Failed to fetch saved videos', 'error');
         } finally {
             setIsLoading(false);
         }
@@ -48,10 +53,16 @@ export default function SwipeFilePage() {
                     if (selectedVideo?.id === id) {
                         setSelectedVideo(null);
                     }
+                    showToast('Video removed from swipe file', 'info');
+                } else {
+                    showToast('Video saved', 'success');
                 }
+            } else {
+                showToast(data.error || 'Failed to update video', 'error');
             }
         } catch (error) {
             console.error('Error toggling save:', error);
+            showToast('Failed to update video', 'error');
         }
     };
 
@@ -68,9 +79,13 @@ export default function SwipeFilePage() {
                 if (selectedVideo?.id === id) {
                     setSelectedVideo({ ...selectedVideo, notes });
                 }
+                showToast('Notes updated successfully', 'success');
+            } else {
+                showToast(data.error || 'Failed to update notes', 'error');
             }
         } catch (error) {
             console.error('Error updating notes:', error);
+            showToast('Failed to update notes', 'error');
         }
     };
 
@@ -78,13 +93,22 @@ export default function SwipeFilePage() {
         <div className="min-h-screen p-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="mb-12">
-                    <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-                        Swipe File
-                    </h1>
-                    <p className="text-lg text-[var(--foreground-secondary)]">
-                        Your saved viral content inspiration
-                    </p>
+                <div className="mb-8">
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center">
+                            <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                                Swipe File
+                            </h1>
+                            <p className="text-lg text-[var(--foreground-secondary)]">
+                                Your collection of viral content inspiration • {savedVideos.length} saved
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Saved Videos Grid */}
