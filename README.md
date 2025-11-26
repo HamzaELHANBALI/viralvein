@@ -9,7 +9,7 @@ A web application that tracks TikTok/Instagram hashtags to identify "outlier" co
 - **Hashtag Tracking**: Monitor multiple TikTok/Instagram hashtags
 - **Smart Filtering**: 4-stage algorithm filters videos by:
   - Date (< 30 days old)
-  - Creator size (< 500k followers)
+  - Creator size (< 10k followers)
   - Minimum views (> 5k views)
   - Viral score threshold (>  1.5x)
 - **Viral Score**: Automatically calculates `Views / Followers` ratio
@@ -125,7 +125,7 @@ viral_score = view_count / creator_followers
 
 // 2. Apply 4-Stage Filter
 - Date Filter: upload_date < 30 days old
-- Whale Filter: creator_followers < 500,000
+- Micro-Creator Filter: creator_followers < 10,000
 - Minimum Viability: view_count > 5,000
 - Gold Threshold: viral_score > 1.5
 ```

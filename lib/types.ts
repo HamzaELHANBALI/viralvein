@@ -42,7 +42,7 @@ export interface FilterCriteria {
 
 export const DEFAULT_FILTERS: FilterCriteria = {
   maxAge: 30,
-  maxFollowers: 500000,
+  maxFollowers: 10000,
   minViews: 5000,
   minViralScore: 1.5,
 };

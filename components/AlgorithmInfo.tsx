@@ -16,10 +16,10 @@ export default function AlgorithmInfo() {
     },
     {
       stage: '2',
-      name: 'Whale Filter',
-      icon: '🐋',
-      criteria: '< 500K followers',
-      description: 'Excludes large creators to find hidden gems',
+      name: 'Micro-Creator Filter',
+      icon: '🌱',
+      criteria: '< 10K followers',
+      description: 'Focus on small creators before they blow up',
       color: 'text-purple-400'
     },
     {
