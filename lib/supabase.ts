@@ -4,7 +4,15 @@ import type { TrackedTag, Video, ScrapeSession } from './types';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// During build time, use placeholder values to prevent errors
+// At runtime, the actual values will be used
+const buildTimeUrl = 'https://placeholder.supabase.co';
+const buildTimeKey = 'placeholder-key';
+
+export const supabase = createClient(
+  supabaseUrl || buildTimeUrl,
+  supabaseAnonKey || buildTimeKey
+);
 
 // Helper functions for database operations
 
