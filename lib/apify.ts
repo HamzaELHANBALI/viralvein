@@ -43,7 +43,7 @@ export async function scrapeTikTokHashtag(
         console.log(`Retrieved ${items.length} items from Apify`);
 
         // Transform Apify results to our Video format
-        const videos = (items as ApifyVideoResult[]).map((item) => {
+        const videos = (items as unknown as ApifyVideoResult[]).map((item) => {
             const views = item.playCount || 0;
             const followers = item.authorMeta?.fans || 0;
             const viralScoreCalc = calculateViralScore(views, followers);
