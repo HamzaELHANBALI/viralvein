@@ -238,32 +238,40 @@ export default function HomePage() {
         </div>
 
         {/* Stats Dashboard */}
-        <StatsDashboard videos={videos} tags={tags} />
+        <div className="mb-10">
+          <StatsDashboard videos={videos} tags={tags} />
+        </div>
 
         {/* Algorithm Info */}
-        <AlgorithmInfo />
+        <div className="mb-10">
+          <AlgorithmInfo />
+        </div>
 
         {/* Hashtag Manager */}
-        <HashtagManager
-          tags={tags}
-          onAdd={handleAddTag}
-          onDelete={handleDeleteTag}
-          onToggleStatus={handleToggleStatus}
-          onScrape={handleScrape}
-          isScraping={isScraping}
-        />
+        <div className="mb-10">
+          <HashtagManager
+            tags={tags}
+            onAdd={handleAddTag}
+            onDelete={handleDeleteTag}
+            onToggleStatus={handleToggleStatus}
+            onScrape={handleScrape}
+            isScraping={isScraping}
+          />
+        </div>
 
         {/* Video Filters */}
         {videos.length > 0 && (
-          <VideoFilters
-            sortBy={sortBy}
-            scoreFilter={scoreFilter}
-            onSortChange={setSortBy}
-            onScoreFilterChange={setScoreFilter}
-            totalResults={filteredAndSortedVideos.length}
-            savedOnly={savedOnly}
-            onSavedOnlyChange={setSavedOnly}
-          />
+          <div className="mb-8">
+            <VideoFilters
+              sortBy={sortBy}
+              scoreFilter={scoreFilter}
+              onSortChange={setSortBy}
+              onScoreFilterChange={setScoreFilter}
+              totalResults={filteredAndSortedVideos.length}
+              savedOnly={savedOnly}
+              onSavedOnlyChange={setSavedOnly}
+            />
+          </div>
         )}
 
         {/* Videos Grid */}
